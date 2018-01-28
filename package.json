@@ -1,5 +1,5 @@
 {
-  "name": "node-js-getting-started",
+  "name": "raphael-web-site",
   "version": "0.3.0",
   "description": "A sample Node.js app using Express 4",
   "engines": {
@@ -11,8 +11,12 @@
     "test": "node test.js"
   },
   "dependencies": {
+    "body-parser": "^1.18.2",
     "ejs": "^2.5.7",
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "gridfs-stream": "^1.1.1",
+    "mongodb": "^3.0.1",
+    "mongoose": "^4.13.10"
   },
   "devDependencies": {
     "request": "^2.81.0",
