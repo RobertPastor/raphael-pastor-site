@@ -3,8 +3,6 @@
 const path = require('path');
 const fs = require('fs');
 
-
-
 var database;
 
 const mongodb = require('mongodb');
@@ -24,6 +22,7 @@ const BSON = require('mongodb-core').BSON;
 process.on('exit', (code) => {
     console.log(`About to exit with code: ${code}`);
     try {
+        console.log('close the database');
         database.close();
     } catch (err) {
         console.log('ERROR - could not close the database');
@@ -31,17 +30,12 @@ process.on('exit', (code) => {
 });
 
 
-module.exports.mongoConnect = function (databaseName, collectionName) {
+var uri = "mongodb://RobertPastor:Bobby1%26%26%26@raphael-pastor-mongodb-shard-00-00-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-01-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-02-mpykx.mongodb.net:27017/admin?replicaSet=raphael-pastor-mongodb-shard-0&ssl=true";
 
+
+module.exports.mongoUploadImages = function (databaseName, collectionName) {
 
     // Set up the connection to mongo ATLAS
-    var uri = "mongodb://bobby:bobbyonecannotbe@raphael-pastor-mongodb-shard-00-00-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-01-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-02-mpykx.mongodb.net:27017/images?replicaSet=raphael-pastor-mongodb-shard-0&ssl=true";
-
-    uri = "mongodb://RobertPastor:Bobby1%26%26%26@raphael-pastor-mongodb-shard-00-00-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-01-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-02-mpykx.mongodb.net:27017/admin?replicaSet=raphael-pastor-mongodb-shard-0&ssl=true";
-
-    //uri = "mongodb+srv://RobertPastor:Bobby1%26%26%26@raphael-pastor-mongodb-mpykx.mongodb.net/images"
-    //uri = "mongodb+srv://bobby:bobbyonecannotbe@raphael-pastor-mongodb-mpykx.mongodb.net/images&authSource=admin"
-
     MongoClient.connect(uri, function (err, client) {
         if (err) {
             console.log('ERROR - err= ' + String(err));
@@ -52,7 +46,7 @@ module.exports.mongoConnect = function (databaseName, collectionName) {
         console.log("database name is = " + databaseName);
         console.log("collection name is = " + collectionName);
         let myImagesCollection = client.db(databaseName).collection(collectionName);
-        //console.log(myImagesCollection);
+        console.log(myImagesCollection);
 
         // path of the image file
         let fileNames = ["belle-du-desert.JPG", "arbre-mystique.JPG", "femme-a-la-cigarette.JPG", "soeurette.JPG"];
@@ -64,12 +58,12 @@ module.exports.mongoConnect = function (databaseName, collectionName) {
 
                 console.log('file = ' + String(imagePath) + ' -- is existing !!!');
 
-                var bucket = new mongodb.GridFSBucket(client.db(databaseName));
+                var gridFSBucket = new mongodb.GridFSBucket(client.db(databaseName));
                 var readStream = fs.createReadStream(imagePath);
                 if (readStream) {
 
                     readStream
-                        .pipe(bucket.openUploadStream(fileName))
+                        .pipe(gridFSBucket.openUploadStream(fileName))
                         .on('error', function (error) {
                             console.log(String(error))
                             return new Promise.reject(error);
@@ -83,40 +77,57 @@ module.exports.mongoConnect = function (databaseName, collectionName) {
                 return new Promise.reject("Stream Not created!!!");
             }
         });
-        Promise.all(promises)
-            .then((results) => {
+        Promise
+            .all(promises)
+            .then(results => {
                 console.log(results);
                 console.log("all insertions done correctly !!!");
                 client.close();
             })
             .catch(err => {
-
+                console.log("Error - err = " + String(err));
+                client.close();
             });
     });
 }
 
-// console.log("file has been read");
-// let binaryMongo = {};
-// binaryMongo.bin = Binary(binaryContents);
-// console.log("size of the mongo binary object = " + binaryMongo.bin.length());
-// client.db(databaseName).collection(collectionName).insert(binaryMongo, function (err, doc) {
-//     if (err) {
-//         console.log('Error while inserting in collection = ' + String(err));
+module.exports.mongoReadImage = function (databaseName, collectionName) {
 
-//         // close the database
-//         console.log("close the connection");
-//         client.close();
+    console.log('read image');
+    // Set up the connection to mongo ATLAS
+    MongoClient.connect(uri, function (err, client) {
+        if (err) {
+            console.log('ERROR - err= ' + String(err));
+            throw err;
+        }
+        database = client;
+        console.log("connected to mongo ATLAS");
+        console.log("database name is = " + databaseName);
+        console.log("collection name is = " + collectionName);
 
-//     } else {
+        var gridFSBucket = new mongodb.GridFSBucket(client.db(databaseName));
+        gridFSBucket.find().forEach(function (element) {
+            console.log(element.filename);
+            let downLoadingFileName = element.filename;
+            var downloadStream = gridFSBucket.openDownloadStreamByName();
 
-//         console.log(myImagesCollection);
+            downloadStream
+                .pipe(fs.createWriteStream(path.join(__dirname, path.join('../temp', element.filename))))
+                .on('error', function (error) {
+                    console.log('Error: err= ', error);
+                    client.close();
+                })
+                .on('finish', function () {
+                    console.log('done - download for file ' + element.fileName);
+                });
 
-//         // close the database
-//         console.log("close the connection");
-//         client.close();
+        });
+        //console.log('close the database');
+        //client.close();
 
-//     }
-// });
+    });
+
+}
 
 
 module.exports.mongoClose = function () {
