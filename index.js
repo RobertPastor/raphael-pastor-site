@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 
 var app = express();
 
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
 
@@ -15,6 +14,7 @@ app.engine('html', require('ejs').renderFile);
 
 app.use(bodyParser.json()); // to support JSON bodies
 app.use(bodyParser.urlencoded({ extended: true })); // to support URL-encoded bodies
+
 
 routes(app);
 
