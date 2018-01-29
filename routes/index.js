@@ -23,23 +23,12 @@ module.exports = function (app) {
         let database = "images";
         let collection = "images";
         try {
-            mongo(database, collection);
+            mongo.mongoConnect(database, collection);
+            //mongo.mongoClose();
         } catch (err) {
             console.log('ERROR - connection failed - err= ' + String(err));
         }
-
-        // path of the image file
-        let fileNames = ["belle-du-desert.JPG", "arbre-mystique.JPG", "femme-a-la-cigarette.JPG", "soeurette.JPG"];
-        fileNames.map(function (fileName) {
-            console.log(fileName);
-            let imagePath = path.join(__dirname, path.join('../public/images/raphael', fileName));
-            if (fs.existsSync(imagePath)) {
-                // Do something
-                console.log('file = ' + String(imagePath) + ' -- is existing !!!');
-            }
-        });
-
-
+        res.render('pages/done');
     });
 
 
