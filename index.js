@@ -15,6 +15,7 @@ app.engine('html', require('ejs').renderFile);
 app.use(bodyParser.json()); // to support JSON bodies
 app.use(bodyParser.urlencoded({ extended: true })); // to support URL-encoded bodies
 
+app.use('/favicon.ico', express.static('images/favicon.ico'));
 
 routes(app);
 
@@ -39,6 +40,7 @@ app.use(function (err, req, res, next) {
 });
 
 app.listen(PORT, () => {
+  routes.cleanTempFolder();
   console.log('Listening on port= ' + String(PORT));
 });
 

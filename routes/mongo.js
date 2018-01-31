@@ -29,9 +29,19 @@ process.on('exit', (code) => {
     }
 });
 
-function flatten(arr) {
-    return arr.reduce(function (a, b) { return a.concat(b); }, []);
-}
+
+// flatten an array of Promises
+
+const flatten = arr => arr.reduce((acc, item) => {
+
+    if (Array.isArray(item)) {
+        return acc.concat(flatten(item));
+    } else if (item instanceof Promise) {
+        return acc.concat(item);
+    } else {
+        return acc;
+    }
+}, [])
 
 
 var uri = "mongodb://RobertPastor:Bobby1%26%26%26@raphael-pastor-mongodb-shard-00-00-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-01-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-02-mpykx.mongodb.net:27017/admin?replicaSet=raphael-pastor-mongodb-shard-0&ssl=true";
@@ -93,50 +103,44 @@ module.exports.mongoUploadImages = function (databaseName, collectionName, fileN
     });
 }
 
-module.exports.mongoReadImages = function (databaseName, collectionName, fileNames) {
+/**
+ * Read one image from mongo ATLAS
+ * @param {*} databaseName 
+ * @param {*} collectionName 
+ * @param {*} fileName 
+ */
+module.exports.mongoReadImage = function (databaseName, collectionName, fileName) {
 
     console.log('read image');
-    // Set up the connection to mongo ATLAS
-    MongoClient.connect(uri, function (err, client) {
-        if (err) {
-            console.log('ERROR - err= ' + String(err));
-            throw err;
-        }
-        database = client;
-        console.log("connected to mongo ATLAS");
-        console.log("database name is = " + databaseName);
-        console.log("collection name is = " + collectionName);
+    return new Promise(function (resolve, reject) {
 
-        let gridFSBucket = new mongodb.GridFSBucket(client.db(databaseName));
-        let promises = fileNames.map(function (fileName) {
-            console.log(fileName);
+        // Set up the connection to mongo ATLAS
+        MongoClient.connect(uri, function (err, client) {
+            if (err) {
+                console.log('ERROR - err= ' + String(err));
+                reject(err);
+            } else {
+                database = client;
+                console.log("connected to mongo ATLAS");
+                console.log("database name is = " + databaseName);
+                console.log("collection name is = " + collectionName);
+                let gridFSBucket = new mongodb.GridFSBucket(client.db(databaseName));
 
-            let downloadStream = gridFSBucket.openDownloadStreamByName(fileName);
-            downloadStream
-                .pipe(fs.createWriteStream(path.join(__dirname, path.join('../public/temp', fileName))))
-                .on('error', function (err) {
-                    console.log('Error: err= ', err);
-                    client.close();
-                    return Promise.reject(err);
-                })
-                .on('finish', function () {
-                    console.log('done - download for file ' + fileName);
-                    return Promise.resolve(fileName);
-                });
-
+                let downloadStream = gridFSBucket.openDownloadStreamByName(fileName);
+                downloadStream
+                    .pipe(fs.createWriteStream(path.join(__dirname, path.join('../public/temp', fileName))))
+                    .on('error', function (err) {
+                        console.log('Error: err= ', err);
+                        client.close();
+                        reject(err);
+                    })
+                    .on('finish', function () {
+                        console.log('done - download for file ' + fileName);
+                        client.close();
+                        resolve(fileName);
+                    });
+            }
         });
-        Promise
-            .all(flatten(promises))
-            .then(results => {
-                console.log(results);
-                console.log("all file reading finished correctly !!!");
-                console.log('closing the connection !!!!!!!!!!!!');
-                //client.close();
-            })
-            .catch(err => {
-                console.log("Error - err = " + String(err));
-                client.close();
-            });
     });
 
 }
