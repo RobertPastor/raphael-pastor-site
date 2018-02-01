@@ -19,3 +19,19 @@ img {
     font-style: normal;
     font-size: 9px;
 }
+
+.very-small {
+    text-align: left;
+    text-shadow: 3px 2px blue;
+    font-family: "Arial", Times, serif;
+    font-style: normal;
+    font-size: 8px;
+}
+
+.container-site {
+    background-color: gold;
+}
+
+.navbar-inverse {
+    background-color: gold;
+}
