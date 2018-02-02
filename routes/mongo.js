@@ -111,7 +111,7 @@ module.exports.mongoUploadImages = function (databaseName, collectionName, fileN
  */
 module.exports.mongoReadImage = function (databaseName, collectionName, fileName) {
 
-    console.log('read image');
+    //console.log('read image');
     return new Promise(function (resolve, reject) {
 
         // Set up the connection to mongo ATLAS
@@ -121,9 +121,9 @@ module.exports.mongoReadImage = function (databaseName, collectionName, fileName
                 reject(err);
             } else {
                 database = client;
-                console.log("connected to mongo ATLAS");
-                console.log("database name is = " + databaseName);
-                console.log("collection name is = " + collectionName);
+                //console.log("connected to mongo ATLAS");
+                //console.log("database name is = " + databaseName);
+                //console.log("collection name is = " + collectionName);
                 let gridFSBucket = new mongodb.GridFSBucket(client.db(databaseName));
 
                 let downloadStream = gridFSBucket.openDownloadStreamByName(fileName);
@@ -135,7 +135,7 @@ module.exports.mongoReadImage = function (databaseName, collectionName, fileName
                         reject(err);
                     })
                     .on('finish', function () {
-                        console.log('done - download for file ' + fileName);
+                        //console.log('done - download for file ' + fileName);
                         client.close();
                         resolve(fileName);
                     });
@@ -149,7 +149,7 @@ module.exports.mongoReadImage = function (databaseName, collectionName, fileName
 module.exports.mongoClose = function () {
     try {
         // perform actions on the collection object
-        console.log("close the connection");
+        //console.log("close the connection");
         database.close();
     } catch (err) {
         console.error("failed to close the database")

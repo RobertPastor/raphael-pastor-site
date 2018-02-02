@@ -28,7 +28,7 @@ module.exports = function (app) {
                     res.send(JSON.stringify({ result: req.params.imageFileName }));
                 })
                 .catch(err => {
-                    console.log('ERROR - during transger - err= ' + String(err));
+                    console.log('ERROR - during transfer - err= ' + String(err));
                     res.send(JSON.stringify({ result: err }));
                 })
         } catch (err) {

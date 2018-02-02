@@ -1,12 +1,62 @@
 
 
+body {
+    font-family: "Times New Roman", Times, serif;
+    font-style: normal;
+    font-size: 9px;
+    margin:0;
+    padding: 0;
+}
+
+.gold {
+    background-color : gold;
+}
+
+.goldrose  {
+    background-color: : goldenrod;
+}
+
+nav {
+    background-color: #333;
+    margin: 0;
+    overflow: hidden;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: gold;
+    border: 1px solid red;
+    overflow: auto;
+}
+
+li {
+    float: left;
+    border : 1px;
+}
+
+li a {
+    display: block;
+    color: blue;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color: orange;
+    border : 1px;
+}
+    
+    
 img {
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 5px;
     
 }
-
 .images {
     width: 150px;
     height: 150px;
@@ -23,7 +73,7 @@ img {
 .very-small {
     text-align: left;
     text-shadow: 3px 2px blue;
-    font-family: "Arial", Times, serif;
+    font-family: "Times New Roman", Times, serif;
     font-style: normal;
     font-size: 8px;
 }
@@ -32,6 +82,10 @@ img {
     background-color: gold;
 }
 
-.navbar-inverse {
-    background-color: gold;
+.active {
+    background-color: #4CAF50;
+    color: white;
 }
+
+
+
