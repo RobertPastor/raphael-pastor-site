@@ -46,7 +46,7 @@ const flatten = arr => arr.reduce((acc, item) => {
 
 var uri = "mongodb://RobertPastor:Bobby1%26%26%26@raphael-pastor-mongodb-shard-00-00-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-01-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-02-mpykx.mongodb.net:27017/admin?replicaSet=raphael-pastor-mongodb-shard-0&ssl=true";
 
-module.exports.mongoUploadImages = function (databaseName, collectionName, fileNames) {
+module.exports.mongoUploadImages = function (databaseName, collectionName, folder, fileNames) {
 
     return new Promise(function (resolve, reject) {
 
@@ -66,7 +66,14 @@ module.exports.mongoUploadImages = function (databaseName, collectionName, fileN
 
             let promises = fileNames.map(function (fileName) {
                 console.log(fileName);
-                let imagePath = path.join(__dirname, path.join('../public/images/raphael', fileName));
+                let imagePath;
+                if ((folder) && (String(folder).length > 0)) {
+                    imagePath = path.join(__dirname, path.join('../public/images/raphael', path.join(folder, fileName)));
+
+                } else {
+                    imagePath = path.join(__dirname, path.join('../public/images/raphael', fileName));
+                }
+
                 if (fs.existsSync(imagePath)) {
                     // Do something
 
@@ -126,23 +133,29 @@ module.exports.mongoReadImage = function (databaseName, collectionName, fileName
                 //console.log("collection name is = " + collectionName);
                 let gridFSBucket = new mongodb.GridFSBucket(client.db(databaseName));
 
-                let downloadStream = gridFSBucket.openDownloadStreamByName(fileName);
-                downloadStream
-                    .pipe(fs.createWriteStream(path.join(__dirname, path.join('../public/temp', fileName))))
-                    .on('error', function (err) {
-                        console.log('Error: err= ', err);
-                        client.close();
-                        reject(err);
-                    })
-                    .on('finish', function () {
-                        //console.log('done - download for file ' + fileName);
-                        client.close();
-                        resolve(fileName);
-                    });
+                try {
+                    let downloadStream = gridFSBucket.openDownloadStreamByName(fileName);
+                    downloadStream
+                        .pipe(fs.createWriteStream(path.join(__dirname, path.join('../public/temp', fileName))))
+                        .on('error', function (err) {
+                            console.log('Error: err= ', err);
+                            client.close();
+                            reject(err);
+                        })
+                        .on('finish', function () {
+                            //console.log('done - download for file ' + fileName);
+                            client.close();
+                            resolve(fileName);
+                        });
+                } catch (err) {
+                    console.log("Error - file not found - err= " + err);
+                    client.close();
+                    reject(err);
+                }
+
             }
         });
     });
-
 }
 
 
