@@ -48,59 +48,59 @@ var uri = "mongodb://RobertPastor:Bobby1%26%26%26@raphael-pastor-mongodb-shard-0
 
 module.exports.mongoUploadImages = function (databaseName, collectionName, fileNames) {
 
-    // Set up the connection to mongo ATLAS
-    MongoClient.connect(uri, function (err, client) {
-        if (err) {
-            console.log('ERROR - err= ' + String(err));
-            throw err;
-        }
-        database = client;
-        console.log("connected to mongo ATLAS");
-        console.log("database name is = " + databaseName);
-        console.log("collection name is = " + collectionName);
-        let myImagesCollection = client.db(databaseName).collection(collectionName);
-        console.log(myImagesCollection);
+    return new Promise(function (resolve, reject) {
 
-        // path of the image file
-
-        let promises = fileNames.map(function (fileName) {
-            console.log(fileName);
-            let imagePath = path.join(__dirname, path.join('../public/images/raphael', fileName));
-            if (fs.existsSync(imagePath)) {
-                // Do something
-
-                console.log('file = ' + String(imagePath) + ' -- is existing !!!');
-
-                let gridFSBucket = new mongodb.GridFSBucket(client.db(databaseName));
-                let readStream = fs.createReadStream(imagePath);
-                if (readStream) {
-
-                    readStream
-                        .pipe(gridFSBucket.openUploadStream(fileName))
-                        .on('error', function (error) {
-                            console.log(String(error))
-                            return new Promise.reject(error);
-                        }).
-                        on('finish', function () {
-                            console.log('done! ' + fileName);
-                            return new Promise(resolve(fileName));
-                        });
-                }
-                return new Promise.reject("Stream Not created!!!");
+        MongoClient.connect(uri, function (err, client) {
+            if (err) {
+                console.log('ERROR - err= ' + String(err));
+                reject(err);
             }
-        });
-        Promise
-            .all(promises)
-            .then(results => {
-                console.log(results);
-                console.log("all insertions done correctly !!!");
-                client.close();
-            })
-            .catch(err => {
-                console.log("Error - err = " + String(err));
-                client.close();
+            database = client;
+            console.log("connected to mongo ATLAS");
+            console.log("database name is = " + databaseName);
+            console.log("collection name is = " + collectionName);
+            let myImagesCollection = client.db(databaseName).collection(collectionName);
+            //console.log(myImagesCollection);
+
+            // path of the image file
+
+            let promises = fileNames.map(function (fileName) {
+                console.log(fileName);
+                let imagePath = path.join(__dirname, path.join('../public/images/raphael', fileName));
+                if (fs.existsSync(imagePath)) {
+                    // Do something
+
+                    console.log('file = ' + String(imagePath) + ' -- is existing !!!');
+
+                    let gridFSBucket = new mongodb.GridFSBucket(client.db(databaseName));
+                    let readStream = fs.createReadStream(imagePath);
+                    if (readStream) {
+
+                        readStream
+                            .pipe(gridFSBucket.openUploadStream(fileName))
+                            .on('error', function (err) {
+                                console.log(String(err))
+                                reject(err);
+                            }).
+                            on('finish', function () {
+                                console.log('done! ' + fileName);
+                                resolve(fileName);
+                            });
+                    }
+                    reject("Stream Not created!!!");
+                }
             });
+            Promise.all(flatten(promises))
+                .then(results => {
+                    resolve(results)
+                })
+                .catch(err => {
+                    resolve(err);
+                })
+
+        });
     });
+
 }
 
 /**

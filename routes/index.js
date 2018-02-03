@@ -4,7 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const mongo = require('./mongo');
 
-const fileNames = ["belle-du-desert.JPG", "arbre-mystique.JPG", "femme-a-la-cigarette.JPG", "soeurette.JPG"];
+//const fileNames = ["belle-du-desert.JPG", "arbre-mystique.JPG", "femme-a-la-cigarette.JPG", "soeurette.JPG", "lutin.JPG"];
+const fileNames = ["lutin.JPG", "madone-en-adoration.JPG"];
 const databaseName = "images";
 const collectionName = "images";
 
@@ -41,7 +42,13 @@ module.exports = function (app) {
 
         console.log('starting upload');
         try {
-            mongo.mongoUploadImages(databaseName, collectionName, fileNames);
+            mongo.mongoUploadImages(databaseName, collectionName, fileNames)
+                .then(results => {
+                    console.log("upload finished correctly!!!;")
+                })
+                .catch(err => {
+                    console.log("Error during upload- err= " + String(err));
+                })
             //mongo.mongoClose();
         } catch (err) {
             console.log('ERROR - connection failed - err= ' + String(err));
