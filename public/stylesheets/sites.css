@@ -15,41 +15,6 @@ body {
 .goldrose  {
     background-color: : goldenrod;
 }
-
-.initial {
-    all: initial;
-  }
-
-nav {
-    background-color: #333;
-    margin: 0;
-    overflow: hidden;
-}
-
-#navcontainerUl ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    background-color: gold;
-    border: 1px solid red;
-
-}
-
-#navcontainerLi li {
-    float: left;
-    border : 1px;
-    display : block;
-}
-
-li a {
-    display: inline-block;
-}
-   
-
-li a:hover {
-    background-color: orange;
-    border : 1px;
-}
  
 img {
     border: 1px solid #ddd;
@@ -64,7 +29,6 @@ img {
 
 .small {
     text-align: left;
-    text-shadow: 3px 2px blue;
     font-family: "Times New Roman", Times, serif;
     font-style: normal;
     font-size: 9px;
@@ -72,8 +36,7 @@ img {
 
 .very-small {
     text-align: left;
-    text-shadow: 3px 2px blue;
-    font-family: "Times New Roman", Times, serif;
+    font-family: Arial;
     font-style: normal;
     font-size: 8px;
 }
