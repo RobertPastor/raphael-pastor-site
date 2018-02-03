@@ -1,10 +1,10 @@
 
 $(document).ready(function () {
 
-    console.log("document is ready!");
+    //console.log("document is ready!");
 
-    // open default tab 
     // Get the element with id="defaultOpen" and click on it
+    // define the default tab that will be displayed
     document.getElementById("defaultOpen").click();
     // load the images
     loadImages();
@@ -13,11 +13,12 @@ $(document).ready(function () {
 
 
 function loadImages() {
+    // loop through the images
     $('img').each(function () {
 
-        console.log($(this).attr('name'));
+        //console.log($(this).attr('name'));
         var imagefileName = $(this).attr('name');
-        // should not give the gif road runner here
+        // should not retrieve the gif road runner here
         if (imagefileName != undefined) {
             $.ajax({
                 cache: false,
@@ -25,14 +26,13 @@ function loadImages() {
                 url: '/read/' + (imagefileName),
                 success: function (data) {
 
-                    console.log("success for file = " + imagefileName);
+                    //console.log("success for file = " + imagefileName);
                     // do stuff after images are loaded here
                     // add the source attribute to the images
                     var id = String(imagefileName).split('.')[0];
                     $('#' + id).attr("src", "/temp/" + imagefileName).load(function () {
-                        console.log('image = ' + imagefileName + ' is loaded ');
+                        //console.log('image = ' + imagefileName + ' is loaded ');
                     });
-
                 },
                 error: function () {
                     console.log('failed to retrieve the image= ' + imagefileName);
@@ -45,9 +45,13 @@ function loadImages() {
 function slugify(text) {
     return text.toString()
         .replace(/\s+/g, '-')           // Replace spaces with -
-
 }
 
+/**
+ * manage the tabbed content
+ * @param {*} evt 
+ * @param {*} tabName 
+ */
 function openTab(evt, tabName) {
     // Declare all variables
     var i, tabcontent, tablinks;

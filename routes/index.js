@@ -21,7 +21,7 @@ module.exports = function (app) {
     });
 
     app.get('/read/:imageFileName', function (req, res, next) {
-        console.log('starting upload file = ' + req.params.imageFileName);
+        //console.log('starting downloading file from Mongo ATLAS= ' + req.params.imageFileName);
         res.setHeader('Content-Type', 'application/json');
         try {
             mongo.mongoReadImage(databaseName, collectionName, req.params.imageFileName)
