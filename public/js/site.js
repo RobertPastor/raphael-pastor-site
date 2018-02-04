@@ -11,8 +11,24 @@ $(document).ready(function () {
 });
 
 
+function updateProgress(newValue) {
+    var progressBar = document.getElementById('progressId');
+    progressBar.value = String(newValue);
+    var progressValue = document.getElementById('pVal');
+    progressValue.innerHTML = String(newValue);
+}
+
+function initProgressBar() {
+    // Gets the number of image elements
+    var numberImages = $('img').length;
+    var progressBar = document.getElementById('progressId');
+    progressBar.max = String(numberImages);
+}
 
 function loadImages() {
+    // init progress bar.
+    initProgressBar();
+    var nbImages = 1;
     // loop through the images
     $('img').each(function () {
 
@@ -32,6 +48,8 @@ function loadImages() {
                     var id = String(imagefileName).split('.')[0];
                     $('#' + id).attr("src", "/temp/" + imagefileName).load(function () {
                         //console.log('image = ' + imagefileName + ' is loaded ');
+                        // update Progress bar
+                        updateProgress(nbImages++);
                     });
                 },
                 error: function () {
