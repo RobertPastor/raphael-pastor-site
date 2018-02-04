@@ -6,8 +6,8 @@ const mongo = require('./mongo');
 
 //const fileNames = ["belle-du-desert.JPG", "arbre-mystique.JPG", "femme-a-la-cigarette.JPG", "soeurette.JPG", "lutin.JPG"];
 //const fileNames = ["lutin.JPG", "madone-en-adoration.JPG"];
-const fileNames = ["IMG_20180203_143201.JPG", "IMG_20180203_143228.JPG", "IMG_20180203_143243.JPG", "IMG_20180203_143304.JPG",
-    "IMG_20180203_143311.JPG", "IMG_20180203_143317.JPG", "IMG_20180203_143325.JPG", "IMG_20180203_143411.JPG"];
+//const fileNames = ["IMG_20180203_143201.JPG", "IMG_20180203_143228.JPG", "IMG_20180203_143243.JPG", "IMG_20180203_143304.JPG",
+//    "IMG_20180203_143311.JPG", "IMG_20180203_143317.JPG", "IMG_20180203_143325.JPG", "IMG_20180203_143411.JPG"];
 const databaseName = "images";
 const collectionName = "images";
 
@@ -44,8 +44,8 @@ module.exports = function (app) {
 
         console.log('starting upload');
         try {
-            let folder = "Corps";
-            mongo.mongoUploadImages(databaseName, collectionName, folder, fileNames)
+            let folder = "Portraits";
+            mongo.mongoUploadImages(databaseName, collectionName, folder)
                 .then(results => {
                     console.log("upload finished correctly!!!;")
                 })

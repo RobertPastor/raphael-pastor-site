@@ -46,9 +46,13 @@ const flatten = arr => arr.reduce((acc, item) => {
 
 var uri = "mongodb://RobertPastor:Bobby1%26%26%26@raphael-pastor-mongodb-shard-00-00-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-01-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-02-mpykx.mongodb.net:27017/admin?replicaSet=raphael-pastor-mongodb-shard-0&ssl=true";
 
-module.exports.mongoUploadImages = function (databaseName, collectionName, folder, fileNames) {
+module.exports.mongoUploadImages = function (databaseName, collectionName, folder) {
 
     return new Promise(function (resolve, reject) {
+
+        if (folder == undefined) {
+            reject('Folder must be defined!!!');
+        }
 
         MongoClient.connect(uri, function (err, client) {
             if (err) {
@@ -63,6 +67,11 @@ module.exports.mongoUploadImages = function (databaseName, collectionName, folde
             //console.log(myImagesCollection);
 
             // path of the image file
+            let fileNames = [];
+            fs.readdirSync(path.join(path.join(__dirname, '../public/images/raphael'), folder)).forEach(fileName => {
+                console.log('file found in folder= ' + fileName)
+                fileNames.push(fileName);
+            })
 
             let promises = fileNames.map(function (fileName) {
                 console.log(fileName);
@@ -90,11 +99,16 @@ module.exports.mongoUploadImages = function (databaseName, collectionName, folde
                                 reject(err);
                             }).
                             on('finish', function () {
-                                console.log('done! ' + fileName);
+                                console.log('file uploaded in Mongo ATLAS correctly - ' + fileName);
                                 resolve(fileName);
                             });
+                    } else {
+                        reject("Stream Not created!!!");
                     }
-                    reject("Stream Not created!!!");
+
+                } else {
+                    console.log('File = ' + imagePath + ' not found');
+                    reject('Error - file ' + imagePath + ' not found!!!');
                 }
             });
             Promise.all(flatten(promises))
@@ -104,10 +118,8 @@ module.exports.mongoUploadImages = function (databaseName, collectionName, folde
                 .catch(err => {
                     resolve(err);
                 })
-
         });
     });
-
 }
 
 /**

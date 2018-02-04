@@ -34,3 +34,9 @@
     border: 1px solid #ccc;
     border-top: none;
 }
+
+.tablinks {
+    font-family: Arial;
+    font-size: 14px;
+
+}
