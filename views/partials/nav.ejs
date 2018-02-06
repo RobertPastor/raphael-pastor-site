@@ -2,13 +2,18 @@
   <button class="tablinks" onclick="openTab(event, 'Portraits')" id="defaultOpen">Portraits</button>
   <button class="tablinks" onclick="openTab(event, 'Paysages')">Paysages</button>
   <button class="tablinks" onclick="openTab(event, 'Corps')">Corps</button>
+  <button class="tablinks" onclick="openTab(event, 'Formation')">Formation</button>
 </div>
 
 <section>
 
-  <p>Images loading Progress:
+  <p>Préparation des images:
+    <progress id="workerId" class="progressBar" max="100" value="0">
+      <span id="workerVal">0</span>%</progress>
+  </p>
+  <p>Chargement des images:
     <progress id="progressId" class="progressBar" max="100" value="0">
-      <span id="pVal">0</span>%</progress>
+      <span id="progressVal">0</span>%</progress>
   </p>
 
 </section>

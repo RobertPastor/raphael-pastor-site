@@ -21,7 +21,11 @@ process.on('exit', (code) => {
     log(`About to exit with code: ${code}`);
     try {
         log('close the database');
-        database.close();
+        if (database != undefined) {
+            database.close();
+            database = undefined;
+        }
+
     } catch (err) {
         log('Error - could not close the connection with the database - err= ' + String(err));
     }
@@ -225,7 +229,8 @@ module.exports.mongoClose = function () {
         // perform actions on the collection object
         //console.log("close the connection");
         database.close();
-        log('Connection is closed !!!');
+        database = undefined;
+        log('Connection to Mongo ATLAS is now closed !!!');
     } catch (err) {
         log("failed to close the connection with the Mongo ATLAS database - err= " + String(err));
     }

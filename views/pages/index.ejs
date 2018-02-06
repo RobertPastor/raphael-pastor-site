@@ -14,25 +14,21 @@
     <div class="jumbotron">
       <div class="container">
 
-        <h2>Ceci est mon site.</h2>
-        <p>Et voici quelques unes de mes créations:</p>
-
         <% include ./portraits.ejs %>
 
           <% include ./paysages.ejs %>
 
             <% include ./corps.ejs %>
 
-              <div id="Divers" class="tabcontent">
+              <% include ./formation.ejs %>
 
-                <td>
-                  <img id="madone-en-adoration" name="madone-en-adoration.JPG" style="width:350px">
-                </td>
-                <td>
-                  <img id="lutin" name="lutin.JPG" style="width:350px">
-                </td>
+                <div id="Divers" class="tabcontent">
 
-              </div>
+                  <div>
+                    <img id="lutin" name="lutin.JPG" style="width:350px">
+                  </div>
+
+                </div>
 
       </div>
     </div>

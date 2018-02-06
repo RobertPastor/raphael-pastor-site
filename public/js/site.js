@@ -1,7 +1,28 @@
 
+var worker = undefined;
+
 $(document).ready(function () {
 
     //console.log("document is ready!");
+
+    if (typeof (Worker) !== "undefined") {
+        // Yes! Web worker support!
+        // Some code.....
+        if (typeof (worker) == "undefined") {
+            worker = new Worker("/js/worker.js");
+            worker.onmessage = function (event) {
+
+                var workerProgressBar = document.getElementById('workerId');
+                workerProgressBar.value = event.data;
+
+                var workerProgressValue = document.getElementById('workerVal');
+                workerProgressValue.innerHTML = event.data;
+            };
+        }
+
+    } else {
+        // Sorry! No Web Worker support..
+    }
 
     // Get the element with id="defaultOpen" and click on it
     // define the default tab that will be displayed
@@ -11,12 +32,18 @@ $(document).ready(function () {
     loadImages();
 });
 
+function stopWorker() {
+    worker.terminate();
+    worker = undefined;
+    console.log("worker is stopped !!!");
+}
+
 var imagesIndex = 0;
 
 function updateProgress() {
     var progressBar = document.getElementById('progressId');
     progressBar.value = String(imagesIndex++);
-    var progressValue = document.getElementById('pVal');
+    var progressValue = document.getElementById('progressVal');
     progressValue.innerHTML = String(imagesIndex);
 }
 
@@ -74,6 +101,7 @@ function loadOneImage(imagefileName) {
                     // if last image => close the connection
                     if (imagesIndex >= $('img').length) {
                         closeConnectionWithMongoAtlas();
+                        stopWorker();
                     }
                 });
             },
