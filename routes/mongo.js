@@ -2,11 +2,9 @@
 
 const path = require('path');
 const fs = require('fs');
-
-var database;
+const { log } = require('../helpers/logger');
 
 const mongodb = require('mongodb');
-
 const Db = require('mongodb').Db;
 const MongoClient = require('mongodb').MongoClient;
 const Server = require('mongodb').Server;
@@ -20,18 +18,17 @@ const assert = require('assert');
 const BSON = require('mongodb-core').BSON;
 
 process.on('exit', (code) => {
-    console.log(`About to exit with code: ${code}`);
+    log(`About to exit with code: ${code}`);
     try {
-        console.log('close the database');
+        log('close the database');
         database.close();
     } catch (err) {
-        console.log('ERROR - could not close the database');
+        log('Error - could not close the connection with the database - err= ' + String(err));
     }
 });
 
 
 // flatten an array of Promises
-
 const flatten = arr => arr.reduce((acc, item) => {
 
     if (Array.isArray(item)) {
@@ -43,6 +40,63 @@ const flatten = arr => arr.reduce((acc, item) => {
     }
 }, [])
 
+var database = undefined;
+
+function connectToMongoAtlas() {
+
+    log('start connecting to Mongo ATLAS');
+    return new Promise(function (resolve, reject) {
+
+        if (database == undefined) {
+            MongoClient.connect(uri, function (err, client) {
+                if (err) {
+                    log('Error while connecting to Mongo ATLAS - err= ' + String(err));
+                    reject(err);
+                } else {
+                    log("Success - Mongo ATLAS is connected !!!");
+                    database = client;
+                    resolve(database);
+                }
+            });
+        } else {
+            log('Mongo ATLAS database is already connected');
+            resolve(database);
+        }
+    });
+}
+
+function downloadFromMongoAtlas(databaseName, fileName) {
+
+    return new Promise(function (resolve, reject) {
+
+        // we assume that we are connected to Mongo ATLAS
+        //console.log("connected to mongo ATLAS");
+        log("database name is = " + databaseName);
+        //console.log("collection name is = " + collectionName);
+        let client = database;
+        let gridFSBucket = new mongodb.GridFSBucket(client.db(databaseName));
+        try {
+            let downloadStream = gridFSBucket.openDownloadStreamByName(fileName);
+            downloadStream
+                .pipe(fs.createWriteStream(path.join(__dirname, path.join('../public/temp', fileName))))
+                .on('error', function (err) {
+                    log('Error: during data transfer from Mongo ATLAS - err= ' + String(err));
+                    client.close();
+                    reject(err);
+                })
+                .on('finish', function () {
+                    log('done - download succeeded for file ' + fileName);
+                    // do not close here the database
+                    resolve(fileName);
+                });
+        } catch (err) {
+            log("Error - during transfer from Mongo ATLAS - err= " + String(err));
+            client.close();
+            reject(err);
+        }
+    });
+}
+
 
 var uri = "mongodb://RobertPastor:Bobby1%26%26%26@raphael-pastor-mongodb-shard-00-00-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-01-mpykx.mongodb.net:27017,raphael-pastor-mongodb-shard-00-02-mpykx.mongodb.net:27017/admin?replicaSet=raphael-pastor-mongodb-shard-0&ssl=true";
 
@@ -51,30 +105,30 @@ module.exports.mongoUploadImages = function (databaseName, collectionName, folde
     return new Promise(function (resolve, reject) {
 
         if (folder == undefined) {
+            log("Error - Folder must be defined to upload files to Mongo ATLAS !!!");
             reject('Folder must be defined!!!');
         }
 
         MongoClient.connect(uri, function (err, client) {
             if (err) {
-                console.log('ERROR - err= ' + String(err));
+                log('Error - during connection to Mongo ATLAS - err= ' + String(err));
                 reject(err);
             }
             database = client;
-            console.log("connected to mongo ATLAS");
-            console.log("database name is = " + databaseName);
-            console.log("collection name is = " + collectionName);
+            log("connected to mongo ATLAS");
+            log("database name is = " + databaseName);
+            log("collection name is = " + collectionName);
             let myImagesCollection = client.db(databaseName).collection(collectionName);
-            //console.log(myImagesCollection);
 
             // path of the image file
             let fileNames = [];
             fs.readdirSync(path.join(path.join(__dirname, '../public/images/raphael'), folder)).forEach(fileName => {
-                console.log('file found in folder= ' + fileName)
+                log('file found in folder = ' + fileName)
                 fileNames.push(fileName);
             })
 
             let promises = fileNames.map(function (fileName) {
-                console.log(fileName);
+                log('looping through files in map - fileName= ' + fileName);
                 let imagePath;
                 if ((folder) && (String(folder).length > 0)) {
                     imagePath = path.join(__dirname, path.join('../public/images/raphael', path.join(folder, fileName)));
@@ -85,8 +139,7 @@ module.exports.mongoUploadImages = function (databaseName, collectionName, folde
 
                 if (fs.existsSync(imagePath)) {
                     // Do something
-
-                    console.log('file = ' + String(imagePath) + ' -- is existing !!!');
+                    log('file = ' + String(imagePath) + ' -- is existing !!!');
 
                     let gridFSBucket = new mongodb.GridFSBucket(client.db(databaseName));
                     let readStream = fs.createReadStream(imagePath);
@@ -95,19 +148,20 @@ module.exports.mongoUploadImages = function (databaseName, collectionName, folde
                         readStream
                             .pipe(gridFSBucket.openUploadStream(fileName))
                             .on('error', function (err) {
-                                console.log(String(err))
+                                log('Error dugin data transfer - err= ' + String(err));
                                 reject(err);
                             }).
                             on('finish', function () {
-                                console.log('file uploaded in Mongo ATLAS correctly - ' + fileName);
+                                log('file correctly uploaded to Mongo ATLAS  - ' + fileName);
                                 resolve(fileName);
                             });
                     } else {
+                        log('Stream not created !!!');
                         reject("Stream Not created!!!");
                     }
 
                 } else {
-                    console.log('File = ' + imagePath + ' not found');
+                    log('File = ' + imagePath + ' not found');
                     reject('Error - file ' + imagePath + ' not found!!!');
                 }
             });
@@ -122,51 +176,46 @@ module.exports.mongoUploadImages = function (databaseName, collectionName, folde
     });
 }
 
+module.exports.mongoConnect = connectToMongoAtlas;
+
 /**
- * Read one image from mongo ATLAS
+ * Read one image - download it from mongo ATLAS
  * @param {*} databaseName 
  * @param {*} collectionName 
  * @param {*} fileName 
  */
 module.exports.mongoReadImage = function (databaseName, collectionName, fileName) {
 
-    //console.log('read image');
+    log('start reading image file - fileName= ' + fileName);
     return new Promise(function (resolve, reject) {
 
-        // Set up the connection to mongo ATLAS
-        MongoClient.connect(uri, function (err, client) {
-            if (err) {
-                console.log('ERROR - err= ' + String(err));
-                reject(err);
-            } else {
-                database = client;
-                //console.log("connected to mongo ATLAS");
-                //console.log("database name is = " + databaseName);
-                //console.log("collection name is = " + collectionName);
-                let gridFSBucket = new mongodb.GridFSBucket(client.db(databaseName));
-
-                try {
-                    let downloadStream = gridFSBucket.openDownloadStreamByName(fileName);
-                    downloadStream
-                        .pipe(fs.createWriteStream(path.join(__dirname, path.join('../public/temp', fileName))))
-                        .on('error', function (err) {
-                            console.log('Error: err= ', err);
-                            client.close();
-                            reject(err);
-                        })
-                        .on('finish', function () {
-                            //console.log('done - download for file ' + fileName);
-                            client.close();
+        if (database == undefined) {
+            connectToMongoAtlas()
+                .then(_ => {
+                    // database is connected
+                    downloadFromMongoAtlas(databaseName, fileName)
+                        .then(results => {
+                            log("Image file correctly downloaded = " + fileName);
                             resolve(fileName);
+                        })
+                        .catch(err => {
+                            reject(err);
                         });
-                } catch (err) {
-                    console.log("Error - file not found - err= " + err);
-                    client.close();
+                })
+                .catch(err => {
                     reject(err);
-                }
-
-            }
-        });
+                })
+        } else {
+            // database is already connected
+            downloadFromMongoAtlas(databaseName, fileName)
+                .then(results => {
+                    log("Image file correctly downloaded = " + fileName);
+                    resolve(fileName);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        }
     });
 }
 
@@ -176,7 +225,8 @@ module.exports.mongoClose = function () {
         // perform actions on the collection object
         //console.log("close the connection");
         database.close();
+        log('Connection is closed !!!');
     } catch (err) {
-        console.error("failed to close the database")
+        log("failed to close the connection with the Mongo ATLAS database - err= " + String(err));
     }
 }
