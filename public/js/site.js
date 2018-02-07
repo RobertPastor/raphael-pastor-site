@@ -29,6 +29,8 @@ $(document).ready(function () {
     document.getElementById("defaultOpen").click();
 
     // load the images
+    $('#prepImages').show();
+    $('#loadImages').show();
     loadImages();
 });
 
@@ -36,6 +38,10 @@ function stopWorker() {
     worker.terminate();
     worker = undefined;
     console.log("worker is stopped !!!");
+    // hide the progress bars
+    $('#prepImages').hide();
+    $('#loadImages').hide();
+
 }
 
 var imagesIndex = 0;
