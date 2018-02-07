@@ -2,9 +2,14 @@
 var i = 0;
 
 function timedCount() {
-    i = i + 1;
+    if (i < 100) {
+        i = i + 1;
+    } else {
+        i = 1;
+    }
+
     postMessage(i);
-    setTimeout("timedCount()", 500);
+    setTimeout("timedCount()", 100);
 }
 
 timedCount();
