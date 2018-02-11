@@ -16,7 +16,8 @@
     "express": "^4.16.2",
     "gridfs-stream": "^1.1.1",
     "mongodb": "^3.0.1",
-    "mongoose": "^4.13.10"
+    "mongoose": "^4.13.10",
+    "sax": "^1.2.4"
   },
   "devDependencies": {
     "request": "^2.81.0",
