@@ -100,20 +100,25 @@ module.exports = function (app) {
 module.exports.cleanTempFolder = function () {
 
     let tempFolder = path.join(__dirname, path.join('../public/temp'));
-    log("clean Temp folder= " + tempFolder);
-    fs.readdir(tempFolder, (err, files) => {
-        if (err) {
-            console.log(err);
-        } else {
-            for (const file of files) {
-                fs.unlink(path.join(tempFolder, file), err => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        //log('file= ' + String(file) + ' -- deleted correctly ');
-                    }
-                });
+    try {
+        log("clean Temp folder= " + tempFolder);
+        fs.readdir(tempFolder, (err, files) => {
+            if (err) {
+                console.log(err);
+            } else {
+                for (const file of files) {
+                    fs.unlink(path.join(tempFolder, file), err => {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            //log('file= ' + String(file) + ' -- deleted correctly ');
+                        }
+                    });
+                }
             }
-        }
-    });
+        });
+    } catch (err) {
+        log("Error - err= " + String(err));
+    }
+
 }
