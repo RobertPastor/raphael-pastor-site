@@ -97,28 +97,54 @@ module.exports = function (app) {
 
 }
 
+function ensureExists(path, mask, cb) {
+    if (typeof mask == 'function') { // allow the `mask` parameter to be optional
+        cb = mask;
+        mask = 511;
+    }
+    fs.mkdir(path, mask, function (err) {
+        if (err) {
+            if (err.code == 'EEXIST') cb(null); // ignore the error if the folder already exists
+            else cb(err); // something else went wrong
+        } else {
+            cb(null); // successfully created folder
+        }
+    });
+}
+
 module.exports.cleanTempFolder = function () {
 
     let tempFolder = path.join(__dirname, path.join('../public/temp'));
-    try {
-        log("clean Temp folder= " + tempFolder);
-        fs.readdir(tempFolder, (err, files) => {
-            if (err) {
-                console.log(err);
-            } else {
-                for (const file of files) {
-                    fs.unlink(path.join(tempFolder, file), err => {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            //log('file= ' + String(file) + ' -- deleted correctly ');
+    ensureExists(tempFolder, 484, function (err) {
+        if (err) {
+            // handle folder creation error {
+            log("clean temp folder - error");
+        } else {
+            // we are all good
+            try {
+                log("clean Temp folder= " + tempFolder);
+                fs.readdir(tempFolder, (err, files) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        for (const file of files) {
+                            fs.unlink(path.join(tempFolder, file), err => {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    //log('file= ' + String(file) + ' -- deleted correctly ');
+                                }
+                            });
                         }
-                    });
-                }
+                    }
+                });
+            } catch (err) {
+                log("Error - err= " + String(err));
             }
-        });
-    } catch (err) {
-        log("Error - err= " + String(err));
-    }
+        }
+    });
+
+
+
 
 }
