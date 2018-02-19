@@ -27,7 +27,7 @@ module.exports = function (app) {
      * function called to download an image from MONGO ATLAS
      */
     app.get('/read/:imageFileName', function (req, res, next) {
-        log('start downloading file from Mongo ATLAS= ' + req.params.imageFileName);
+        //log('start downloading file from Mongo ATLAS= ' + req.params.imageFileName);
         res.setHeader('Content-Type', 'application/json');
         try {
             mongo.mongoReadImage(databaseName, collectionName, req.params.imageFileName)
@@ -52,6 +52,7 @@ module.exports = function (app) {
         log('starting upload all the available files');
         try {
             let folder = "Portraits";
+            folder = "Autres";
             mongo.mongoUploadImages(databaseName, collectionName, folder)
                 .then(results => {
                     log("upload finished correctly to Mongo ATLAS - folder is = " + folder);

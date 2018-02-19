@@ -75,7 +75,7 @@ function downloadFromMongoAtlas(databaseName, fileName) {
 
         // we assume that we are connected to Mongo ATLAS
         //console.log("connected to mongo ATLAS");
-        log("database name is = " + databaseName);
+        //log("database name is = " + databaseName);
         //console.log("collection name is = " + collectionName);
         let client = database;
         let gridFSBucket = new mongodb.GridFSBucket(client.db(databaseName));
@@ -89,7 +89,7 @@ function downloadFromMongoAtlas(databaseName, fileName) {
                     reject(err);
                 })
                 .on('finish', function () {
-                    log('done - download succeeded for file ' + fileName);
+                    //log('done - download succeeded for file ' + fileName);
                     // do not close here the database
                     resolve(fileName);
                 });
@@ -190,7 +190,7 @@ module.exports.mongoConnect = connectToMongoAtlas;
  */
 module.exports.mongoReadImage = function (databaseName, collectionName, fileName) {
 
-    log('start reading image file - fileName= ' + fileName);
+    //log('start reading image file - fileName= ' + fileName);
     return new Promise(function (resolve, reject) {
 
         if (database == undefined) {
