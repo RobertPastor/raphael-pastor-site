@@ -228,7 +228,9 @@ module.exports.mongoClose = function () {
     try {
         // perform actions on the collection object
         //console.log("close the connection");
-        database.close();
+        if (database != undefined) {
+            database.close();
+        }
         database = undefined;
         log('Connection to Mongo ATLAS is now closed !!!');
     } catch (err) {
