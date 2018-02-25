@@ -223,7 +223,9 @@ module.exports.mongoReadImage = function (databaseName, collectionName, fileName
     });
 }
 
-
+/**
+ * close the connection to Mongo ATLAS
+ */
 module.exports.mongoClose = function () {
     try {
         // perform actions on the collection object

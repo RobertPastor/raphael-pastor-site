@@ -1,21 +1,47 @@
-<div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Formation')" id="defaultOpen">Formation</button>
+<div class="progressBarSection">
 
-  <button class="tablinks" onclick="openTab(event, 'Portraits')">Portraits</button>
-  <button class="tablinks" onclick="openTab(event, 'Paysages')">Paysages</button>
-  <button class="tablinks" onclick="openTab(event, 'Corps')">Corps</button>
-  <button class="tablinks" onclick="openTab(event, 'Divers')">Divers</button>
+  <table>
+    <tr>
+
+      <td>
+        <div class="tab">
+          <button name="Formation" class="tablinks" onclick="openTab(event, 'Formation')" id="defaultOpen">Formation</button>
+
+          <button name="Portraits" class="tablinks" onclick="openTab(event, 'Portraits')">Portraits</button>
+          <button name="Paysages" class="tablinks" onclick="openTab(event, 'Paysages')">Paysages</button>
+          <button name="Corps" class="tablinks" onclick="openTab(event, 'Corps')">Corps</button>
+          <button name="Divers" class="tablinks" onclick="openTab(event, 'Divers')">Divers</button>
+        </div>
+      </td>
+
+      <td>
+
+        <table>
+          <tr>
+            <td>
+              <p id="prepImages" class="prepImages">Préparation des images:</p>
+            </td>
+            <td>
+              <progress id="workerId" class="progressBar" max="100" value="0">
+                <span id="workerVal">0</span>%</progress>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p id="loadImages" class="loadImages">Chargement des images:</p>
+            </td>
+            <td>
+              <progress id="progressId" class="progressBar" max="100" value="0">
+                <span id="progressVal">0</span>%</progress>
+            </td>
+          </tr>
+        </table>
+
+      </td>
+
+    </tr>
+
+  </table>
+
+
 </div>
-
-<section>
-
-  <p id="prepImages">Préparation des images:
-    <progress id="workerId" class="progressBar" max="100" value="0">
-      <span id="workerVal">0</span>%</progress>
-  </p>
-  <p id="loadImages">Chargement des images:
-    <progress id="progressId" class="progressBar" max="100" value="0">
-      <span id="progressVal">0</span>%</progress>
-  </p>
-
-</section>

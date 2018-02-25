@@ -28,11 +28,15 @@ $(document).ready(function () {
     // define the default tab that will be displayed
     document.getElementById("defaultOpen").click();
 
-    // load the images
+    // show the progress bars related to the images loading process
     $('#prepImages').show();
     $('#loadImages').show();
     loadImages();
+
 });
+
+
+
 
 function stopWorker() {
     worker.terminate();
@@ -141,7 +145,6 @@ function loadImages() {
 
                 console.log("Connection established with Mongo ATLAS !!! ");
                 connectedToMongoAtlas = true;
-
 
                 // loop through the images
                 $('img').each(function () {

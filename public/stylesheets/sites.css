@@ -24,8 +24,8 @@ img {
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 5px;
-    
 }
+
 .images {
     width: 150px;
     height: 150px;
@@ -55,8 +55,28 @@ img {
     color: white;
 }
 
+/* use z-index and show above the nav bar => 
+because it will be hidden at the end of the images loading process */
 .progressBar {
     width : 100%;
+    z-index: 20 ;
+    vertical-align: top;
+}
+
+.progressBarSection {
+    width: 100%;
+    z-index: 30;
+    vertical-align: top;
+    position: fixed;
+    margin-top: 1px;
+}
+
+
+.container {
+    z-index: 1;
+	top: 50px;
+	margin-top:1px;
+	position:relative;
 }
 
 
