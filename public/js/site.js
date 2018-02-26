@@ -36,8 +36,6 @@ $(document).ready(function () {
 });
 
 
-
-
 function stopWorker() {
     worker.terminate();
     worker = undefined;
@@ -45,7 +43,8 @@ function stopWorker() {
     // hide the progress bars
     $('#prepImages').hide();
     $('#loadImages').hide();
-
+    $("#workerId").hide();
+    $("#progressId").hide();
 }
 
 var imagesIndex = 0;
@@ -54,14 +53,18 @@ function updateProgress() {
     var progressBar = document.getElementById('progressId');
     progressBar.value = String(imagesIndex++);
     var progressValue = document.getElementById('progressVal');
-    progressValue.innerHTML = String(imagesIndex);
+    if (progressValue != undefined) {
+        progressValue.innerHTML = String(imagesIndex);
+    }
 }
 
 function initProgressBar() {
     // Gets the number of image elements
     var numberImages = $('img').length;
     var progressBar = document.getElementById('progressId');
-    progressBar.max = String(numberImages);
+    if (progressBar != undefined) {
+        progressBar.max = String(numberImages);
+    }
 }
 
 

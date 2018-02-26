@@ -1,10 +1,10 @@
 <div class="progressBarSection">
 
-  <table>
+  <table class="tab">
     <tr>
 
-      <td>
-        <div class="tab">
+      <td width="60%">
+        <div>
           <button name="Formation" class="tablinks" onclick="openTab(event, 'Formation')" id="defaultOpen">Formation</button>
 
           <button name="Portraits" class="tablinks" onclick="openTab(event, 'Portraits')">Portraits</button>
@@ -14,28 +14,40 @@
         </div>
       </td>
 
-      <td>
+      <td width="40%">
+        <div class="progressBarDiv">
 
-        <table>
-          <tr>
-            <td>
-              <p id="prepImages" class="prepImages">Préparation des images:</p>
-            </td>
-            <td>
-              <progress id="workerId" class="progressBar" max="100" value="0">
-                <span id="workerVal">0</span>%</progress>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <p id="loadImages" class="loadImages">Chargement des images:</p>
-            </td>
-            <td>
-              <progress id="progressId" class="progressBar" max="100" value="0">
-                <span id="progressVal">0</span>%</progress>
-            </td>
-          </tr>
-        </table>
+          <table class="progressBarTable">
+
+            <tr>
+
+              <td width="30%">
+                <p id="prepImages" class="prepImages">Préparation des images:</p>
+              </td>
+
+              <td width="70%">
+                <progress id="workerId" class="progressBar" max="100" value="0">
+                  <span id="workerVal">0</span>%</progress>
+              </td>
+
+            </tr>
+
+            <tr>
+
+              <td width="30%">
+                <p id="loadImages" class="loadImages">Chargement des images:</p>
+              </td>
+
+              <td width="70%">
+                <progress id="progressId" class="progressBar" max="100" value="0">
+                  <span id="progressVal">0</span>%</progress>
+              </td>
+
+            </tr>
+
+          </table>
+
+        </div>
 
       </td>
 

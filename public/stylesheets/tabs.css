@@ -4,6 +4,7 @@
     background-color: #f1f1f1;
     position: fixed;
     z-index: 10;
+    width: 100%;
 }
 
 /* Style the buttons that are used to open the tab content */
@@ -43,4 +44,20 @@
     font-family: Arial;
     font-size: 14px;
     z-index: 10;
+}
+
+.prepImages {
+    background-color: wheat;
+}
+
+.loadImages {
+    background-color: wheat;
+}
+
+.progressBarTable {
+    width: 100%;
+}
+
+.progressBarDiv {
+    width: 100%;
 }
